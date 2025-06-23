@@ -11,9 +11,11 @@
       Dashboard
     </h1>
   
+    {#if data.user}
     <p class="text-lg text-slate-300">
       Selamat datang kembali, <span class="font-semibold text-blue-400">{data.user.name}</span>!
     </p>
+  {/if}
   
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       

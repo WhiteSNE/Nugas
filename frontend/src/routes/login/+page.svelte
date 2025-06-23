@@ -1,5 +1,6 @@
 <script lang="ts">
     // Impor ActionData untuk mendapatkan tipe data dari form action
+    import { PUBLIC_BACKEND_URL } from '$env/static/public';
     import type { ActionData } from './$types';
   
     // `form` akan berisi data yang dikembalikan oleh action jika terjadi error
@@ -10,7 +11,7 @@
     <div class="w-full max-w-md p-8 space-y-6 bg-gray-800 rounded-lg shadow-lg border border-slate-700">
       <h1 class="text-3xl font-bold text-center">Admin Panel Login</h1>
   
-      <form method="POST" class="space-y-6">
+      <form method="POST" action="{PUBLIC_BACKEND_URL}/api/auth/login" class="space-y-6">
         
         {#if form?.message}
           <div class="p-3 text-sm rounded-md bg-red-500/20 text-red-300 border border-red-500/30">

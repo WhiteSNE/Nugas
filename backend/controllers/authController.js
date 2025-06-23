@@ -4,6 +4,7 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const path = require('path');
 
 // Utility untuk generate JWT dengan data lebih kaya
 const generateToken = (id, role, name) => {
@@ -43,16 +44,14 @@ exports.login = async (req, res) => {
     // ATUR TOKEN DI COOKIE
     res.cookie('token', token, {
       httpOnly: true,
-      secure: false,
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
+      path: '/',
       maxAge: 30 * 24 * 60 * 60 * 1000 // 30 hari
     });
 
     // Kirim respons sukses tanpa token di body
-    res.status(200).json({ 
-        message: 'Login berhasil',
-        user: { id: user.id, name: user.name, email: user.email, role: user.role }
-    });
+    return res.redirect('http://localhost:5173/admin/dashboard')
 
   } catch (error) {
     console.error('Login error:', error);
