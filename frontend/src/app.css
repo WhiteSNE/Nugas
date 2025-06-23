@@ -23,3 +23,28 @@
   html body{
     overflow-x: hidden;
   }
+
+  /* Styling untuk Swiper Carousel */
+.swiper-pagination-bullet {
+  background-color: white !important;
+  opacity: 0.6;
+}
+.swiper-pagination-bullet-active {
+  background-color: #06b6d4 !important; /* cyan-500 */
+  opacity: 1;
+}
+.swiper-button-next, .swiper-button-prev {
+  color: white !important;
+  background-color: rgba(0,0,0,0.3);
+  width: 3rem !important;
+  height: 3rem !important;
+  border-radius: 9999px;
+  transition: background-color 0.2s;
+}
+.swiper-button-next:hover, .swiper-button-prev:hover {
+  background-color: rgba(0,0,0,0.5);
+}
+.swiper-button-next::after, .swiper-button-prev::after {
+  font-size: 1.25rem !important;
+  font-weight: 700;
+}

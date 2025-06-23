@@ -24,14 +24,6 @@
         {/if}
       </button>
     </div>
-
-    <div class="hidden md:flex items-center space-x-4 font-mono">
-        <span class="text-slate-400 font-semibold text-lg">PV</span>
-        <a href="/pv/001" class="text-white hover:text-blue-400 transition-colors font-bold text-lg">001</a>
-        <a href="/pv/002" class="text-white hover:text-blue-400 transition-colors font-bold text-lg">002</a>
-        <a href="/pv/003" class="text-white hover:text-blue-400 transition-colors font-bold text-lg">003</a>
-        <a href="/pv/004" class="text-white hover:text-blue-400 transition-colors font-bold text-lg">004</a>
-    </div>
     
     <div class="hidden">...</div>
     <div class="hidden">...</div>
@@ -43,11 +35,9 @@
       class="absolute left-0 top-full w-64 bg-slate-800 border-r border-b border-slate-700 rounded-br-lg shadow-lg"
     >
       <div class="flex flex-col p-2">
-        <a href="/" class="text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-slate-700">Home</a>
-        <a href="/changelogs" class="text-slate-300 hover:text-white hover:bg-slate-700 block px-3 py-2 rounded-md text-base font-medium">Changelogs</a>
-        <a href="/media" class="text-slate-300 hover:text-white hover:bg-slate-700 block px-3 py-2 rounded-md text-base font-medium">Media</a>
-        <a href="/about" class="text-slate-300 hover:text-white hover:bg-slate-700 block px-3 py-2 rounded-md text-base font-medium">About</a>
-        
+        <a href="/#home" class="text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-slate-700">Home</a>
+        <a href="/#changelogs" class="text-slate-300 hover:text-white hover:bg-slate-700 block px-3 py-2 rounded-md text-base font-medium">Changelogs</a>
+        <a href="/#media" class="text-slate-300 hover:text-white hover:bg-slate-700 block px-3 py-2 rounded-md text-base font-medium">Media</a>
         <div class="border-t border-slate-700 mt-2 pt-2">
             <a href="/login" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded transition-colors block text-center">
                 Login
