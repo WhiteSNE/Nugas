@@ -1,17 +1,15 @@
-import { redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
 /** @type {import('./$types').Actions} */
 export const actions = {
   default: async ({ request, cookies }) => {
     const token = cookies.get('token');
-    const formData = await request.formData();
+    if (!token) {
+        return fail(401, { success: false, message: 'Anda tidak diautentikasi.' });
+    }
 
-    const data = {
-      title: formData.get('title'),
-      category: formData.get('category'),
-      content: formData.get('content')
-    };
+    const formData = await request.formData();
     
     const endpoint = `${PUBLIC_BACKEND_URL}/api/changelogs`;
 
@@ -19,23 +17,22 @@ export const actions = {
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(data)
+        body: formData
       });
 
       if (!response.ok) {
-        // Jika ada error dari backend, kita bisa menampilkannya
         const errorData = await response.json();
-        return { success: false, message: errorData.message || 'Gagal mempublikasikan.' };
+        return fail(response.status, { success: false, message: errorData.message || 'Gagal membuat changelog.' });
       }
 
     } catch (error) {
-        return { success: false, message: 'Tidak bisa terhubung ke server.' };
+        console.error("Error connecting to backend:", error);
+        return fail(500, { success: false, message: 'Tidak bisa terhubung ke server backend.' });
     }
     
-    // Jika berhasil, redirect ke halaman daftar changelog
+    // Jika berhasil, redirect ke halaman daftar changelogs
     throw redirect(303, '/admin/changelogs');
   }
 };

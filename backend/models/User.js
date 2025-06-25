@@ -9,7 +9,7 @@ class User extends Model {
   }
   static associate(models){
     User.hasMany(models.Media, {
-        foreignKey: 'uploader_id', // <-- DIUBAH menjadi 'u' kecil
+        foreignKey: 'uploader_id',
     });
     User.hasMany(models.Changelog, {
         foreignKey: 'user_id',
@@ -33,9 +33,9 @@ User.init({
   tableName: 'users',
   timestamps: true,
   createdAt: 'created_at',
-  updatedAt: false, // We don't have an `updated_at` column in the migration
+  updatedAt: false,
   hooks: {
-    // Hash password before creating a user
+
     beforeCreate: async (user) => {
       if (user.password) {
         const salt = await bcrypt.genSalt(10);

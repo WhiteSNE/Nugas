@@ -2,96 +2,103 @@ const { Media, User } = require('../models');
 const fs = require('fs');
 const path = require('path');
 
-// @desc    Upload a new media file
+// @desc    Upload file baru ke galeri
 // @route   POST /api/media/upload
 // @access  Private/Admin
 exports.uploadMedia = async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ message: 'Please upload a file' });
-    }
+	try {
+		if (!req.file) {
+			return res.status(400).json({ message: 'Mohon upload sebuah file' });
+		}
 
-    const { title } = req.body;
-    if (!title) {
-        fs.unlinkSync(req.file.path);
-        return res.status(400).json({ message: 'Please provide a title' });
-    }
+		const { title } = req.body;
+		if (!title) {
+			fs.unlinkSync(req.file.path);
+			return res.status(400).json({ message: 'Mohon berikan judul' });
+		}
+		const absolutePath = req.file.path.replace(/\\/g, '/');
+		const relativePath = 'uploads/' + absolutePath.split('/uploads/')[1];
 
-    const filePath = req.file.path.replace(/\\/g, "/").replace('public/', '');
+		const newMedia = await Media.create({
+			title,
+			path: relativePath,
+			uploader_id: req.user.id,
+			type: 'gallery'
+		});
 
-    const newMedia = await Media.create({
-      title,
-      path: filePath,
-      uploader_id: req.user.id,
-    });
-
-    res.status(201).json(newMedia);
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
+		res.status(201).json(newMedia);
+	} catch (error) {
+		res.status(500).json({ message: 'Server error', error: error.message });
+	}
 };
 
-// @desc    Get all media records
+// @desc    Mendapatkan semua media dengan tipe 'gallery'
 // @route   GET /api/media
 // @access  Public
 exports.getAllMedia = async (req, res) => {
-    try {
-        const media = await Media.findAll({
-            order: [['created_at', 'DESC']],
-            include: { model: User, attributes: ['id', 'name'] }
-        });
-        res.status(200).json(media);
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
+	try {
+		const media = await Media.findAll({
+			where: { type: 'gallery' },
+			order: [['created_at', 'DESC']],
+			include: { model: User, attributes: ['id', 'name'] }
+		});
+		res.status(200).json(media);
+	} catch (error) {
+		res.status(500).json({ message: 'Server error', error: error.message });
+	}
 };
 
-
-// @desc    Delete a media file
+// @desc    Hapus file media
 // @route   DELETE /api/media/:id
 // @access  Private/Admin
 exports.deleteMedia = async (req, res) => {
-    try {
-        const media = await Media.findByPk(req.params.id);
-        if (!media) {
-            return res.status(404).json({ message: 'Media not found' });
-        }
-        
-        const fullPath = path.join(__dirname, '..', 'public', media.path);
-        fs.unlink(fullPath, (err) => {
-            if(err){
-                console.error("Error deleting physical file:", err);
-            }
-        });
+	try {
+		const media = await Media.findByPk(req.params.id);
+		if (!media) {
+			return res.status(404).json({ message: 'Media tidak ditemukan' });
+		}
 
-        await media.destroy();
-        res.status(200).json({ message: 'Media file deleted successfully' });
+		const fullPath = path.join(__dirname, '..', 'public', media.path);
+		if (fs.existsSync(fullPath)) {
+			fs.unlinkSync(fullPath);
+		}
 
-    } catch (error) {
-        console.error("Error deleting media:", error);
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
+		await media.destroy();
+		res.status(200).json({ message: 'File media berhasil dihapus' });
+	} catch (error) {
+		console.error('Error saat menghapus media:', error);
+		res.status(500).json({ message: 'Server error', error: error.message });
+	}
 };
 
-// @desc    Update media metadata (e.g., title)
+// @desc    Update metadata media (termasuk mengganti file)
 // @route   PUT /api/media/:id
 // @access  Private/Admin
 exports.updateMedia = async (req, res) => {
-    const { title } = req.body;
-    try {
-        const media = await Media.findByPk(req.params.id);
+	try {
+		const media = await Media.findByPk(req.params.id);
+		if (!media) {
+			if (req.file) fs.unlinkSync(req.file.path);
+			return res.status(404).json({ message: 'Media tidak ditemukan' });
+		}
 
-        if (!media) {
-            return res.status(404).json({ message: 'Media not found' });
-        }
+		media.title = req.body.title || media.title;
 
-        media.title = title || media.title; // Hanya update jika title diberikan
+		if (req.file) {
+			const oldFullPath = path.join(__dirname, '..', 'public', media.path);
+			if (fs.existsSync(oldFullPath)) {
+				fs.unlinkSync(oldFullPath);
+			}
+			const absolutePath = req.file.path.replace(/\\/g, '/');
+			const relativePath = 'uploads/' + absolutePath.split('/uploads/')[1];
 
-        await media.save();
-        res.status(200).json(media);
+			media.path = relativePath;
+		}
 
-    } catch (error) {
-        console.error("Error updating media:", error);
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
+		await media.save();
+		res.status(200).json(media);
+	} catch (error) {
+		console.error('Error saat update media:', error);
+		res.status(500).json({ message: 'Server error', error: error.message });
+	}
 };

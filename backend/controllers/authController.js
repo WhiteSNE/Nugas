@@ -1,12 +1,9 @@
-// Ganti isi file: controllers/authController.js
-
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const path = require('path');
 
-// Utility untuk generate JWT dengan data lebih kaya
 const generateToken = (id, role, name) => {
   return jwt.sign({ id, role, name }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -38,10 +35,8 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: 'Email atau password salah.' });
     }
     
-    // Buat token dengan menyertakan role dan name
     const token = generateToken(user.id, user.role, user.name);
     
-    // ATUR TOKEN DI COOKIE
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -50,7 +45,6 @@ exports.login = async (req, res) => {
       maxAge: 30 * 24 * 60 * 60 * 1000 // 30 hari
     });
 
-    // Kirim respons sukses tanpa token di body
     return res.redirect('http://localhost:5173/admin/dashboard')
 
   } catch (error) {
@@ -64,7 +58,7 @@ exports.login = async (req, res) => {
 // @route   GET /api/auth/profile
 exports.getProfile = async (req, res) => {
   console.log('[getProfile] req.cookies.token:', req.cookies.token);
-  console.log('[getProfile] req.user:', req.user); // dari protect middleware
+  console.log('[getProfile] req.user:', req.user);
   if (!req.user) {
     return res.status(401).json({ message: 'Unauthorized' });
   }

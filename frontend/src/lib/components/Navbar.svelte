@@ -9,7 +9,7 @@
 </script>
 
 <nav class="sticky top-0 z-50">
-  <div class="flex items-center justify-between h-16 px-4">
+  <div class="flex items-center justify-between h-14 px-4">
 
     <div class="flex items-center">
       <button 
@@ -32,8 +32,7 @@
   {#if isOpen}
     <div 
       transition:slide={{ duration: 200 }} 
-      class="absolute left-0 top-full w-64 bg-slate-800 border-r border-b border-slate-700 rounded-br-lg shadow-lg"
-    >
+      class="absolute left-0 top-full w-64 bg-slate-800 border-r border-b border-slate-700 rounded-br-lg shadow-lg">
       <div class="flex flex-col p-2">
         <a href="/#home" class="text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-slate-700">Home</a>
         <a href="/#changelogs" class="text-slate-300 hover:text-white hover:bg-slate-700 block px-3 py-2 rounded-md text-base font-medium">Changelogs</a>

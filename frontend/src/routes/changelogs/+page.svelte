@@ -2,57 +2,50 @@
   import Navbar from '$lib/components/Navbar.svelte';
   import type { PageData } from './$types';
 
-  export let data: PageData;
 
-  // === STATE MANAGEMENT ===
-  // Daftar filter yang akan kita tampilkan. Sesuaikan dengan kategori yang Anda miliki.
+  interface Changelog {
+    id: number;
+    title: string;
+    category: string;
+    created_at: string;
+  }
+
+  export let data: { changelogs: Changelog[] };
+
   const FILTERS = ['LATEST', 'ANNOUNCEMENT', 'UPDATE', 'BUGFIX', 'MAINTENANCE'];
   
-  // State untuk melacak filter yang sedang aktif. Defaultnya 'LATEST'.
   let activeFilter: string = 'LATEST';
-  
-  // State untuk melacak halaman yang sedang aktif pada pagination.
-  let currentPage: number = 1;
-  const itemsPerPage: number = 9; // Tampilkan 9 item per halaman (grid 3x3)
 
-  
-  // === DERIVED STATE (LOGIKA REAKTIF) ===
-  // Variabel ini akan otomatis dihitung ulang jika `data.changelogs` atau `activeFilter` berubah.
+  let currentPage: number = 1;
+  const itemsPerPage: number = 9;
+
   $: filteredChangelogs = data.changelogs.filter(changelog => {
     if (activeFilter === 'LATEST') {
-      return true; // Jika 'LATEST', tampilkan semua
-    }
-    // Cocokkan `activeFilter` (huruf besar) dengan `changelog.category` (huruf kecil)
+      return true;
+}
+
     return changelog.category.toUpperCase() === activeFilter;
   });
 
-  // Data yang akan ditampilkan di halaman saat ini, diambil dari data yang sudah difilter.
   $: paginatedChangelogs = filteredChangelogs.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // Hitung total halaman yang dibutuhkan berdasarkan data yang sudah difilter.
   $: totalPages = Math.ceil(filteredChangelogs.length / itemsPerPage);
 
-
-  // === HELPER FUNCTIONS ===
-  // Fungsi untuk memformat tanggal menjadi YYYY.MM.DD
   function formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString('en-CA').replace(/-/g, '.');
   }
 
-  // Fungsi yang dipanggil saat tombol filter diklik
   function handleFilterClick(filter: string) {
     activeFilter = filter;
-    currentPage = 1; // Selalu reset ke halaman 1 setiap kali ganti filter
+    currentPage = 1;
   }
 
-  // Fungsi yang dipanggil saat tombol pagination diklik
   function handlePageChange(page: number) {
-    if (page < 1 || page > totalPages) return; // Jangan lakukan apa-apa jika halaman tidak valid
+    if (page < 1 || page > totalPages) return;
     currentPage = page;
-    // Scroll ke atas halaman agar pengguna tahu konten telah berubah
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 </script>

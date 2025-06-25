@@ -1,35 +1,27 @@
 const express = require('express');
 const router = express.Router();
 
-const User = require('../models/User'); // ✅
+const User = require('../models/User');
 const { login, getProfile } = require('../controllers/authController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 const { PreRegistration } = require('../models/PreRegistration');
 const crypto = require('crypto');
 
-// POST new pre-registration (simplified version)
 router.post('/pre-register', async (req, res) => {
   const { email } = req.body;
-
-  // Validate email format
   if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
     return res.status(400).json({ error: 'Invalid email format' });
   }
 
   try {
-    // Check for duplicates in pre-registrations
     const existingPreReg = await PreRegistration.findOne({ where: { email } });
     if (existingPreReg) {
       return res.status(409).json({ error: 'Email already pre-registered' });
     }
-
-    // Check for duplicates in users table
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(409).json({ error: 'Email already registered' });
     }
-
-    // Create new pre-registration
     await PreRegistration.create({ email });
     
     res.json({ message: 'Pre-registration successful!' });
@@ -39,7 +31,6 @@ router.post('/pre-register', async (req, res) => {
   }
 });
 
-// Password reset request
 router.post('/request-password-reset', async (req, res) => {
   const { email } = req.body;
   
@@ -50,19 +41,17 @@ router.post('/request-password-reset', async (req, res) => {
     }
     
     const resetToken = crypto.randomBytes(32).toString('hex');
-    const resetExpires = new Date(Date.now() + 3600000); // 1 hour
+    const resetExpires = new Date(Date.now() + 3600000);
     
     await user.update({
       reset_token: resetToken,
       reset_expires: resetExpires
     });
-    
-    // In a real implementation, you would send an email here
     console.log(`Password reset token for ${email}: ${resetToken}`);
     
     res.json({ 
       message: 'Password reset instructions sent',
-      resetToken // Only for development - remove in production
+      resetToken
     });
   } catch (error) {
     console.error('Password reset error:', error);
@@ -70,7 +59,6 @@ router.post('/request-password-reset', async (req, res) => {
   }
 });
 
-// Password reset
 router.post('/reset-password', async (req, res) => {
   const { token, newPassword } = req.body;
   
@@ -86,11 +74,9 @@ router.post('/reset-password', async (req, res) => {
       return res.status(400).json({ error: 'Invalid or expired token' });
     }
     
-    // Update password
     user.password = newPassword;
+
     await user.save();
-    
-    // Clear reset token
     await user.update({
       reset_token: null,
       reset_expires: null
@@ -103,22 +89,17 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
-// Existing routes
 router.post('/login', login);
 router.get('/profile', protect, getProfile);
-
-// Admin-only route to convert pre-registrations to users
 router.post('/convert-pre-registrations', protect, authorize('admin'), async (req, res) => {
   try {
     const preRegistrations = await PreRegistration.findAll();
     
     let createdCount = 0;
     for (const preReg of preRegistrations) {
-      // Skip if email already exists in users
       const userExists = await User.findOne({ where: { email: preReg.email } });
       if (userExists) continue;
       
-      // Create user with temporary password
       await User.create({
         email: preReg.email,
         name: preReg.email.split('@')[0], // Default name
@@ -140,7 +121,6 @@ router.post('/convert-pre-registrations', protect, authorize('admin'), async (re
   }
 });
 
-// Example of an admin-only route
 router.get('/admin/data', protect, authorize('admin'), (req, res) => {
   res.status(200).json({ message: 'Welcome to the admin dashboard!' });
 });

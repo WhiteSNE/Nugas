@@ -34,6 +34,10 @@ Changelog.init({
     type: DataTypes.TEXT,
     allowNull: false,
   },
+  bannerImageUrl: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   user_id: {
     type: DataTypes.INTEGER,
   },
@@ -43,7 +47,7 @@ Changelog.init({
   tableName: 'changelogs',
   timestamps: true,
   createdAt: 'created_at',
-  updatedAt: false, // We don't have an `updated_at` column
+  updatedAt: false,
 });
 
 module.exports = Changelog;

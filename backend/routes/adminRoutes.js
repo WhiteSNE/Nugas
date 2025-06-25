@@ -1,18 +1,28 @@
 const express = require('express');
 const router = express.Router();
 
-// Impor controller yang sudah ada dan yang baru
-const { convertPreRegistrations } = require('../controllers/registrationController');
-const { getStats } = require('../controllers/adminController'); // <-- PASTIKAN INI DIIMPOR
+// adminRoutes.js
+const {
+  convertPreRegistrations,
+  getAllPreRegistrations
+} = require('../controllers/registrationController');
+const {
+  getStats,
+  getAllUsers,
+  updateUser,
+  deleteUser,
+  adminResetPassword
+} = require('../controllers/adminController');
 
-// Impor middleware
 const { protect, authorize } = require('../middleware/authMiddleware');
 
-// Rute yang sudah ada
-router.post('/convert-pre-registrations', protect, authorize('admin'), convertPreRegistrations);
+router.get('/users', protect, authorize('admin'), getAllUsers);
+router.put('/users/:id', protect, authorize('admin'), updateUser);
+router.delete('/users/:id', protect, authorize('admin'), deleteUser);
 
-// ===== TAMBAHKAN RUTE BARU UNTUK STATISTIK DI SINI =====
+router.post('/convert-pre-registrations', protect, authorize('admin'), convertPreRegistrations);
+router.post('/reset-password', protect, authorize('admin'), adminResetPassword);
 router.get('/stats', protect, authorize('admin'), getStats);
-// ========================================================
+router.get('/registrations', protect, authorize('admin'), getAllPreRegistrations);
 
 module.exports = router;

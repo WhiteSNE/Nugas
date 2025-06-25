@@ -19,7 +19,7 @@ module.exports = {
       uploader_id: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'users', // table name
+          model: 'users',
           key: 'id'
         },
         onUpdate: 'CASCADE',

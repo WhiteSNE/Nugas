@@ -1,50 +1,76 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-:root{
-    --color-bg-base : gray;
+/* =======================
+   🌐 Global CSS Variables
+========================== */
+:root {
+  --color-bg-base: #1e293b; /* slate-800 */
+  --color-accent: #06b6d4;  /* cyan-500 */
+  --color-text: #f1f5f9;    /* slate-100 */
+  --color-muted: #94a3b8;   /* slate-400 */
 }
 
+/* =======================
+   🌍 Global HTML Defaults
+========================== */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg-base);
+  color: var(--color-text);
+  font-family: theme('fontFamily.sans');
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* =======================
+   📜 Scroll Sections
+========================== */
 .scroll-container {
-    height: 100vh;
-    overflow-y: scroll;
-    scroll-snap-type: y mandatory; 
-  }
-  
-  .scroll-section {
-    height: 100vh;
-    width: 100%;
-    scroll-snap-align: start;
-  }
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+}
 
-  html {
-    scroll-behavior: smooth;
-  }
+.scroll-section {
+  height: 100vh;
+  width: 100%;
+  scroll-snap-align: start;
+}
 
-  html body{
-    overflow-x: hidden;
-  }
-
-  /* Styling untuk Swiper Carousel */
+/* =======================
+   🎠 Swiper Custom Theme
+========================== */
 .swiper-pagination-bullet {
   background-color: white !important;
   opacity: 0.6;
 }
+
 .swiper-pagination-bullet-active {
-  background-color: #06b6d4 !important; /* cyan-500 */
+  background-color: var(--color-accent) !important;
   opacity: 1;
 }
-.swiper-button-next, .swiper-button-prev {
+
+.swiper-button-next,
+.swiper-button-prev {
   color: white !important;
-  background-color: rgba(0,0,0,0.3);
+  background-color: rgba(0, 0, 0, 0.3);
   width: 3rem !important;
   height: 3rem !important;
   border-radius: 9999px;
   transition: background-color 0.2s;
 }
-.swiper-button-next:hover, .swiper-button-prev:hover {
-  background-color: rgba(0,0,0,0.5);
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background-color: rgba(0, 0, 0, 0.5);
 }
-.swiper-button-next::after, .swiper-button-prev::after {
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
   font-size: 1.25rem !important;
   font-weight: 700;
 }

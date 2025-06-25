@@ -13,7 +13,6 @@ export async function load({ fetch }) {
 
     const media = await response.json();
 
-    // Kirim data media ke komponen +page.svelte
     return {
       media: media
     };

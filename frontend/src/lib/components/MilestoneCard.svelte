@@ -1,7 +1,4 @@
 <script lang="ts">
-    // Komponen ini menerima dua props:
-    // 1. 'milestone': Objek yang berisi detail hadiah (target, nama, gambar, dll).
-    // 2. 'achieved': Boolean yang menandakan apakah milestone ini sudah tercapai.
     export let milestone: { target: number; name: string; amount: string; image: string; };
     export let achieved: boolean;
   </script>

@@ -1,76 +1,79 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import TipTapEditor from '$lib/components/TiptapEditor.svelte';
+	import type { PageData, ActionData } from './$types';
+	// REVISI: Impor variabel lingkungan dengan cara SvelteKit yang benar
+	import { PUBLIC_BACKEND_URL } from '$env/static/public';
+	
+    export let data: PageData;
+    export let form: ActionData;
 
-	// Terima data spesifik dari +page.js
-	export let data;
-
-	// Salin data ke variabel formData agar bisa diubah di form
-	// Asumsi `data.changelog` berisi objek seperti { id, title, category, content }
-	let formData = { ...data.changelog };
-
-	let isSubmitting = false;
-	let message = '';
-
-	async function handleUpdate() {
-		isSubmitting = true;
-		message = '';
-		try {
-			// Kirim request PUT untuk memperbarui data
-			const res = await fetch(`/api/changelogs/${formData.id}`, { // Perhatikan penggunaan ID di URL
-				method: 'PUT', // atau PATCH
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(formData)
-			});
-
-			if (res.ok) {
-				alert('✅ Changelog berhasil diperbarui!');
-				// Jika berhasil, kembalikan pengguna ke halaman utama changelog
-				goto('/admin/changelogs');
-			} else {
-				const result = await res.json();
-				message = `Gagal memperbarui: ${result.error || 'Terjadi kesalahan server.'}`;
-			}
-		} catch (e) {
-			message = 'Terjadi kesalahan koneksi.';
-		} finally {
-			isSubmitting = false;
-		}
-	}
+    // REVISI: Logika parsing JSON telah dipindahkan ke server,
+    // jadi kode di sini menjadi lebih bersih dan sederhana.
+    // Kita langsung gunakan data.changelog.jsonContent yang sudah di-parse.
+    let jsonContent: object = data.changelog.jsonContent;
 </script>
 
-<div class="bg-slate-800 p-4 rounded-lg border border-slate-600">
-	<h2 class="text-xl font-bold mb-4 text-white">Edit Changelog</h2>
+<h1 class="text-2xl font-bold mb-6">Edit Changelog</h1>
 
-	<form on:submit|preventDefault={handleUpdate}>
-		<input
-			type="text"
-			bind:value={formData.title}
-			placeholder="Judul"
-			class="w-full p-2 mb-3 rounded bg-slate-900 border border-slate-600 text-white"
-			required
-		/>
-
-		<select bind:value={formData.category} class="w-full p-2 mb-3 rounded bg-slate-900 border border-slate-600 text-white">
-			<option value="announcement">Announcement</option>
-			<option value="update">Update</option>
-			<option value="bugfix">Bugfix</option>
-			<option value="maintenance">Maintenance</option>
-		</select>
-
-		<textarea
-			bind:value={formData.content}
-			placeholder="Isi changelog..."
-			rows="5"
-			class="w-full p-2 mb-3 rounded bg-slate-900 border border-slate-600 text-white"
-			required
-		></textarea>
-
-		<button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded disabled:opacity-50" disabled={isSubmitting}>
-			{isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
-		</button>
-	</form>
+<form method="POST" enctype="multipart/form-data" class="space-y-4 p-6 bg-gray-800 rounded-lg">
     
-    {#if message}
-		<p class="mt-3 text-sm text-red-400">{message}</p>
-	{/if}
-</div>
+    {#if form?.message}
+        <div class="p-3 rounded-md mb-4 text-red-300 bg-red-500/20">
+            {form.message}
+        </div>
+    {/if}
+
+    <!-- Input Judul, diisi dengan data awal -->
+	<div>
+        <label for="title" class="block mb-2 text-sm font-medium">Judul</label>
+        <input 
+            type="text" 
+            id="title" 
+            name="title" 
+            required 
+            class="w-full p-2 rounded bg-gray-700 border-gray-600"
+            value={data.changelog.title}
+        />
+    </div>
+
+    <!-- Input untuk MENGGANTI Banner Image -->
+    <div>
+        <label for="bannerImage" class="block mb-2 text-sm font-medium">Ganti Banner Image (Opsional)</label>
+        {#if data.changelog.bannerImageUrl}
+            <!-- REVISI: Menggunakan variabel PUBLIC_BACKEND_URL yang sudah diimpor -->
+            <img src="{PUBLIC_BACKEND_URL}/{data.changelog.bannerImageUrl}" alt="Current Banner" class="max-h-40 rounded-md mb-2">
+            <p class="text-xs text-gray-400 mb-2">Mengupload gambar baru akan menggantikan gambar di atas.</p>
+        {/if}
+        <input 
+            type="file" 
+            id="bannerImage" 
+            name="bannerImage" 
+            accept="image/*" 
+            class="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700" 
+        />
+    </div>
+
+	<!-- Pilihan Kategori, diisi dengan data awal -->
+	<div>
+        <label for="category" class="block mb-2 text-sm font-medium">Kategori</label>
+        <select id="category" name="category" required class="w-full p-2 rounded bg-gray-700 border-gray-600">
+            <option value="update" selected={data.changelog.category === 'update'}>Update</option>
+            <option value="bugfix" selected={data.changelog.category === 'bugfix'}>Bug Fix</option>
+            <option value="maintenance" selected={data.changelog.category === 'maintenance'}>Maintenance</option>
+            <option value="announcement" selected={data.changelog.category === 'announcement'}>Announcement</option>
+        </select>
+    </div>
+
+    <!-- Editor Tiptap -->
+	<div>
+        <label class="block mb-2 text-sm font-medium">Konten</label>
+        <TipTapEditor bind:value={jsonContent} placeholder="Tulis isi changelog di sini..." />
+    </div>
+
+	<!-- Input tersembunyi untuk mengirim data Tiptap -->
+	<input type="hidden" name="content" value={JSON.stringify(jsonContent)} />
+	
+    <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 transition-colors">
+        Simpan Perubahan
+    </button>
+</form>

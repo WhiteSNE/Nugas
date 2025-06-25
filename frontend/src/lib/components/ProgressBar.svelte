@@ -1,5 +1,4 @@
 <script lang="ts">
-    // Komponen ini menerima satu prop: 'progress', yaitu persentase dari 0 hingga 100.
     export let progress: number;
   </script>
   

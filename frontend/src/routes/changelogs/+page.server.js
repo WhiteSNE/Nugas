@@ -13,14 +13,12 @@ export async function load({ fetch }) {
 
     const changelogs = await response.json();
 
-    // Kirim data changelogs ke komponen +page.svelte
     return {
       changelogs: changelogs
     };
 
   } catch (error) {
     console.error("Gagal menghubungi API changelogs:", error);
-    // Kembalikan array kosong jika terjadi error
     return {
       changelogs: [],
       error: 'Tidak dapat memuat data changelogs.'

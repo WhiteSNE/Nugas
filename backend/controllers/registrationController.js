@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const { PreRegistration } = require('../models/PreRegistration');
+const PreRegistration = require('../models/PreRegistration');
 
 exports.convertPreRegistrations = async (req, res) => {
   try {
@@ -13,7 +13,7 @@ exports.convertPreRegistrations = async (req, res) => {
       await User.create({
         email: preReg.email,
         name: preReg.email.split('@')[0],
-        password: 'TempPassword123!', // default password
+        password: 'TempPassword123!',
         role: 'client',
         status: 'active'
       });
@@ -29,5 +29,14 @@ exports.convertPreRegistrations = async (req, res) => {
   } catch (error) {
     console.error('Conversion error:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+exports.getAllPreRegistrations = async (req, res) => {
+  try {
+    const data = await PreRegistration.findAll({ attributes: ['email'] });
+    res.json({ data });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
   }
 };

@@ -25,6 +25,18 @@
 	},
 	"dependencies": {
 		"@tailwindcss/vite": "^4.1.10",
+		"@tiptap/core": "^2.22.3",
+		"@tiptap/extension-bold": "^2.22.3",
+		"@tiptap/extension-heading": "^2.22.3",
+		"@tiptap/extension-image": "^2.22.3",
+		"@tiptap/extension-italic": "^2.22.3",
+		"@tiptap/extension-link": "^2.22.3",
+		"@tiptap/extension-placeholder": "^2.22.3",
+		"@tiptap/extension-text-align": "^2.22.3",
+		"@tiptap/extension-underline": "^2.22.3",
+		"@tiptap/html": "^2.22.3",
+		"@tiptap/pm": "^2.22.3",
+		"@tiptap/starter-kit": "^2.22.3",
 		"swiper": "^11.2.8"
 	}
 }

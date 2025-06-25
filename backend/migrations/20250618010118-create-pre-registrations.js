@@ -1,4 +1,3 @@
-// migrations/XXXXXXXXXXXXXX-create-pre-registrations.js
 'use strict';
 
 module.exports = {

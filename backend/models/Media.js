@@ -9,7 +9,6 @@ class Media extends Model {
    * The `models/index.js` file will call this method automatically.
    */
   static associate(models) {
-    // define association here
     Media.belongsTo(models.User, {
       foreignKey: 'uploader_id',
     });
@@ -21,6 +20,16 @@ Media.init({
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
+  },
+  type: {
+    type: DataTypes.ENUM('gallery', 'banner'),
+    allowNull: false,
+    defaultValue: 'gallery',
+  },
+  status: {
+    type: DataTypes.ENUM('permanent', 'temporary'),
+    defaultValue: 'permanent',
+    allowNull: false,
   },
   title: {
     type: DataTypes.STRING,
@@ -39,7 +48,7 @@ Media.init({
   tableName: 'media',
   timestamps: true,
   createdAt: 'created_at',
-  updatedAt: false, // We don't have an `updated_at` column
+  updatedAt: false,
 });
 
 module.exports = Media;

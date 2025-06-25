@@ -1,9 +1,7 @@
 <script lang="ts">
-    // Impor ActionData untuk mendapatkan tipe data dari form action
     import { PUBLIC_BACKEND_URL } from '$env/static/public';
     import type { ActionData } from './$types';
   
-    // `form` akan berisi data yang dikembalikan oleh action jika terjadi error
     export let form: ActionData;
   </script>
   

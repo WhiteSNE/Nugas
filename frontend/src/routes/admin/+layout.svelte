@@ -42,6 +42,26 @@
           >
             <span class="mx-2 text-sm font-medium">Media</span>
           </a>
+          <!--User-->
+          <a
+            class="flex items-center rounded-lg px-3 py-2 text-slate-200 hover:bg-slate-700"
+            href="/admin/user"
+          >
+            <span class="mx-2 text-sm font-medium">User</span>
+          </a>
+          <a
+            class="flex items-center rounded-lg px-3 py-2 text-slate-200 hover:bg-slate-700"
+            href="/admin/pre-registration"
+          >
+            <span class="mx-2 text-sm font-medium">Pre-Regist</span>
+          </a>
+          <a
+            class="flex items-center rounded-lg px-3 py-2 text-slate-200 hover:bg-slate-700"
+            href="/admin/reset-password"
+          >
+            <span class="mx-2 text-sm font-medium">Reset Password</span>
+          </a>
+
         </nav>
   
         <!-- User Profile & Logout -->
@@ -53,6 +73,7 @@
                 <span class="text-xs text-slate-400">{data.user.role}</span>
               </div>
               
+              <!-- svelte-ignore a11y_consider_explicit_label -->
               <button on:click={logout} class="text-slate-400 hover:text-red-400" title="Logout">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
               </button>

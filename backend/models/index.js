@@ -16,9 +16,6 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
-// --- THIS IS THE CORRECTED PART ---
-// Instead of calling the require as a function, we just require the model files.
-// The .init() method has already been called within each model file.
 fs
   .readdirSync(__dirname)
   .filter(file => {
@@ -30,12 +27,9 @@ fs
     );
   })
   .forEach(file => {
-    // We just require the model file. It will automatically add itself to sequelize.models
     const model = require(path.join(__dirname, file));
     db[model.name] = model;
   });
-// --- END OF CORRECTION ---
-
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {

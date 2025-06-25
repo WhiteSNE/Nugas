@@ -1,37 +1,42 @@
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
-// Set up storage engine
-const storage = multer.diskStorage({
-  destination: './public/uploads/',
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-  },
-});
+function createUploader(subfolder) {
+  const destinationPath = path.join(__dirname, '../public/uploads', subfolder);
 
-// Check file type
-function checkFileType(file, cb) {
-  // Allowed extensions
-  const filetypes = /jpeg|jpg|png|gif/;
-  // Check extension
-  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-  // Check mime type
-  const mimetype = filetypes.test(file.mimetype);
-
-  if (mimetype && extname) {
-    return cb(null, true);
-  } else {
-    cb('Error: Images Only!');
+  if (!fs.existsSync(destinationPath)) {
+    fs.mkdirSync(destinationPath, { recursive: true });
   }
+
+  const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, destinationPath);
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    },
+  });
+
+  function checkFileType(file, cb) {
+    const filetypes = /jpeg|jpg|png|gif/;
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = filetypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb('Error: Hanya file gambar yang diizinkan!');
+    }
+  }
+
+  return multer({
+    storage: storage,
+    limits: { fileSize: 10000000 },
+    fileFilter: function (req, file, cb) {
+      checkFileType(file, cb);
+    },
+  });
 }
 
-// Initialize upload variable
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 10000000 }, // Limit file size to 10MB
-  fileFilter: function (req, file, cb) {
-    checkFileType(file, cb);
-  },
-});
-
-module.exports = upload;
+module.exports = createUploader;
